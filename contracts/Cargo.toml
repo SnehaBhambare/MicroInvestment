@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "pool",
+    "token",
+    "strategy",
+]
+resolver = "2"
