@@ -7,21 +7,6 @@ A production-ready decentralized investment pool where users pool small investme
 ### Mobile View
 ![Mobile Dashboard](screenshots/moblie.png)
 
-### Desktop Dashboard
-![Desktop Dashboard](screenshots/dashboard.png)
-
-### Pool Cards
-![Pool Cards](screenshots/pools.png)
-
-### Deposit Flow
-![Deposit Modal](screenshots/deposit.png)
-
-### Withdraw Flow
-![Withdraw Modal](screenshots/withdraw.png)
-
-### Transaction History
-![Transaction History](screenshots/history.png)
-
 ## Architecture
 
 ```
