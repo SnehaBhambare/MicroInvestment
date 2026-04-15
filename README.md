@@ -2,6 +2,26 @@
 
 A production-ready decentralized investment pool where users pool small investments and receive proportional ownership via pool share tokens (DLS).
 
+## Screenshots
+
+### Mobile View
+![Mobile Dashboard](screenshots/moblie.png)
+
+### Desktop Dashboard
+![Desktop Dashboard](screenshots/dashboard.png)
+
+### Pool Cards
+![Pool Cards](screenshots/pools.png)
+
+### Deposit Flow
+![Deposit Modal](screenshots/deposit.png)
+
+### Withdraw Flow
+![Withdraw Modal](screenshots/withdraw.png)
+
+### Transaction History
+![Transaction History](screenshots/history.png)
+
 ## Architecture
 
 ```
