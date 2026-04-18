@@ -55,11 +55,21 @@ A production-ready decentralized investment pool where users pool small investme
 │   └── src/
 │       ├── app/       # Next.js app router
 │       ├── components/# UI components
-│       └── lib/       # Stellar SDK helpers, mock data, wallet
+│       └── lib/       # Stellar SDK helpers, wallet integration
 ├── backend/           # Express API (analytics, metadata)
 ├── scripts/           # Deploy + fund scripts
 └── .github/workflows/ # CI/CD pipeline
 ```
+
+## Deployed Contract Addresses (Testnet)
+
+| Contract | Address |
+|---|---|
+| Pool Contract | `CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` |
+| Token (DLS) Contract | `CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` |
+| Strategy Contract | `CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` |
+
+> Replace the placeholder addresses above with the actual contract IDs from your `bash scripts/deploy.sh` output.
 
 ## Setup Instructions
 
@@ -91,20 +101,32 @@ cargo build --release --target wasm32-unknown-unknown
 stellar keys generate admin --network testnet
 bash scripts/fund-testnet.sh $(stellar keys address admin)
 
-# Deploy all contracts
+# Deploy all contracts (outputs contract IDs)
 bash scripts/deploy.sh
 ```
 
-### 4. Run frontend
+### 4. Configure environment
+
+Copy the contract IDs printed by the deploy script into your frontend env file:
+
+```bash
+cd frontend
+cp .env.local.example .env.local
+# Edit .env.local and set:
+# NEXT_PUBLIC_POOL_CONTRACT_ID=<pool contract id>
+# NEXT_PUBLIC_TOKEN_CONTRACT_ID=<token contract id>
+# NEXT_PUBLIC_STRATEGY_CONTRACT_ID=<strategy contract id>
+```
+
+### 5. Run frontend
 
 ```bash
 cd frontend
 npm install
-# Copy contract IDs from deploy output into .env.local
 npm run dev
 ```
 
-### 5. Run backend
+### 6. Run backend
 
 ```bash
 cd backend

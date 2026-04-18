@@ -7,7 +7,7 @@
 
 use soroban_sdk::{
     contract, contractimpl, contracttype, symbol_short,
-    Address, Env, Symbol, Vec,
+    Address, Env, Symbol, IntoVal,
     log,
 };
 
@@ -78,7 +78,7 @@ impl StrategyContract {
     // ── Called by Pool on deposit ────────────────────────────────────────────
 
     /// Pool calls this when new funds arrive. Updates AUM tracking.
-    pub fn on_deposit(env: Env, amount: i128) {
+    pub fn on_dep(env: Env, amount: i128) {
         Self::require_pool(&env);
         let aum: i128 = env.storage().instance().get(&TOTAL_AUM).unwrap_or(0);
         env.storage().instance().set(&TOTAL_AUM, &(aum + amount));
@@ -142,8 +142,8 @@ impl StrategyContract {
             &pool_addr,
             &symbol_short!("upd_val"),
             soroban_sdk::vec![&env,
-                soroban_sdk::Val::from(env.current_contract_address()),
-                soroban_sdk::Val::from(new_aum),
+                env.current_contract_address().into_val(&env),
+                new_aum.into_val(&env),
             ],
         );
 

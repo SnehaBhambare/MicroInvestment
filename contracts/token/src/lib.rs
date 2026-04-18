@@ -19,6 +19,12 @@ const SYMBOL_KEY: Symbol = symbol_short!("SYMBOL");
 const DECIMALS: Symbol   = symbol_short!("DECIMALS");
 const TOTAL_SUPPLY: Symbol = symbol_short!("SUPPLY");
 
+#[contracttype]
+#[derive(Clone)]
+pub enum DataKey {
+    Balance(Address),
+}
+
 // ─── Data Types ──────────────────────────────────────────────────────────────
 
 #[contracttype]
@@ -66,7 +72,7 @@ impl PoolTokenContract {
         Self::require_pool(&env);
         assert!(amount > 0, "mint amount must be positive");
 
-        let balance_key = Self::balance_key(&env, &to);
+        let balance_key = DataKey::Balance(to.clone());
         let current: i128 = env.storage().persistent().get(&balance_key).unwrap_or(0);
         env.storage().persistent().set(&balance_key, &(current + amount));
 
@@ -83,7 +89,7 @@ impl PoolTokenContract {
         Self::require_pool(&env);
         assert!(amount > 0, "burn amount must be positive");
 
-        let balance_key = Self::balance_key(&env, &from);
+        let balance_key = DataKey::Balance(from.clone());
         let current: i128 = env.storage().persistent().get(&balance_key).unwrap_or(0);
         assert!(current >= amount, "insufficient balance to burn");
 
@@ -98,7 +104,7 @@ impl PoolTokenContract {
     // ── Standard Token Interface ─────────────────────────────────────────────
 
     pub fn balance(env: Env, account: Address) -> i128 {
-        let key = Self::balance_key(&env, &account);
+        let key = DataKey::Balance(account);
         env.storage().persistent().get(&key).unwrap_or(0)
     }
 
@@ -132,8 +138,8 @@ impl PoolTokenContract {
         from.require_auth();
         assert!(amount > 0, "transfer amount must be positive");
 
-        let from_key = Self::balance_key(&env, &from);
-        let to_key   = Self::balance_key(&env, &to);
+        let from_key = DataKey::Balance(from.clone());
+        let to_key   = DataKey::Balance(to.clone());
 
         let from_bal: i128 = env.storage().persistent().get(&from_key).unwrap_or(0);
         assert!(from_bal >= amount, "insufficient balance");
@@ -159,9 +165,5 @@ impl PoolTokenContract {
     fn require_pool(env: &Env) {
         let pool: Address = env.storage().instance().get(&POOL).unwrap();
         pool.require_auth();
-    }
-
-    fn balance_key(env: &Env, account: &Address) -> soroban_sdk::Val {
-        (symbol_short!("BAL"), account.clone()).into_val(env)
     }
 }

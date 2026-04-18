@@ -6,7 +6,7 @@
 
 use soroban_sdk::{
     contract, contractimpl, contracttype, symbol_short,
-    Address, Env, Symbol, token,
+    Address, Env, Symbol, token, IntoVal,
     log,
 };
 
@@ -20,6 +20,14 @@ const TOTAL_VALUE: Symbol   = symbol_short!("TVALUE");
 const POOL_NAME: Symbol     = symbol_short!("PNAME");
 const FEE_BPS: Symbol       = symbol_short!("FEEBPS");   // basis points (e.g. 50 = 0.5%)
 const LOCKED: Symbol        = symbol_short!("LOCKED");   // reentrancy guard
+
+// ─── User position storage key ───────────────────────────────────────────────
+
+#[contracttype]
+#[derive(Clone)]
+pub enum DataKey {
+    UserPosition(Address),
+}
 
 // ─── Data Types ──────────────────────────────────────────────────────────────
 
@@ -114,7 +122,7 @@ impl PoolContract {
         env.storage().instance().set(&TOTAL_SHARES, &(total_shares + shares_to_mint));
 
         // Update user position
-        let user_key = Self::user_key(&env, &user);
+        let user_key = DataKey::UserPosition(user.clone());
         let mut position: UserPosition = env.storage().persistent()
             .get(&user_key)
             .unwrap_or(UserPosition { shares: 0, deposited_value: 0 });
@@ -124,14 +132,12 @@ impl PoolContract {
 
         // Mint pool share tokens to user via Token contract
         let token_addr: Address = env.storage().instance().get(&TOKEN_ADDR).unwrap();
-        let token_client = token::Client::new(&env, &token_addr);
-        // Call mint on our custom token contract
         env.invoke_contract::<()>(
             &token_addr,
             &symbol_short!("mint"),
             soroban_sdk::vec![&env,
-                soroban_sdk::Val::from(user.clone()),
-                soroban_sdk::Val::from(shares_to_mint),
+                user.clone().into_val(&env),
+                shares_to_mint.into_val(&env),
             ],
         );
 
@@ -139,9 +145,9 @@ impl PoolContract {
         let strategy_addr: Address = env.storage().instance().get(&STRATEGY_ADDR).unwrap();
         env.invoke_contract::<()>(
             &strategy_addr,
-            &symbol_short!("on_deposit"),
+            &symbol_short!("on_dep"),
             soroban_sdk::vec![&env,
-                soroban_sdk::Val::from(net_amount),
+                net_amount.into_val(&env),
             ],
         );
 
@@ -161,7 +167,7 @@ impl PoolContract {
 
         assert!(shares > 0, "shares must be positive");
 
-        let user_key = Self::user_key(&env, &user);
+        let user_key = DataKey::UserPosition(user.clone());
         let mut position: UserPosition = env.storage().persistent()
             .get(&user_key)
             .expect("no position found");
@@ -196,8 +202,8 @@ impl PoolContract {
             &token_addr,
             &symbol_short!("burn"),
             soroban_sdk::vec![&env,
-                soroban_sdk::Val::from(user.clone()),
-                soroban_sdk::Val::from(shares),
+                user.clone().into_val(&env),
+                shares.into_val(&env),
             ],
         );
 
@@ -231,7 +237,7 @@ impl PoolContract {
 
     /// Returns a user's current position.
     pub fn get_user_position(env: Env, user: Address) -> UserPosition {
-        let user_key = Self::user_key(&env, &user);
+        let user_key = DataKey::UserPosition(user);
         env.storage().persistent()
             .get(&user_key)
             .unwrap_or(UserPosition { shares: 0, deposited_value: 0 })
@@ -251,10 +257,6 @@ impl PoolContract {
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
-
-    fn user_key(env: &Env, user: &Address) -> soroban_sdk::Val {
-        (symbol_short!("POS"), user.clone()).into_val(env)
-    }
 
     fn assert_not_locked(env: &Env) {
         let locked: bool = env.storage().instance().get(&LOCKED).unwrap_or(false);

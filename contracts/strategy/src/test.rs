@@ -22,7 +22,7 @@ fn test_balanced_allocation() {
     let (admin, pool, client) = deploy(&env, RiskLevel::Balanced);
 
     // Simulate a deposit
-    client.on_deposit(&1_000_000_i128);
+    client.on_dep(&1_000_000_i128);
 
     let alloc = client.get_allocation();
     assert_eq!(alloc.stable_pct, 50);
@@ -37,7 +37,7 @@ fn test_conservative_allocation() {
     env.mock_all_auths();
     let (_, _, client) = deploy(&env, RiskLevel::Conservative);
 
-    client.on_deposit(&1_000_000_i128);
+    client.on_dep(&1_000_000_i128);
 
     let alloc = client.get_allocation();
     assert_eq!(alloc.stable_pct, 80);
@@ -50,7 +50,7 @@ fn test_aggressive_allocation() {
     env.mock_all_auths();
     let (_, _, client) = deploy(&env, RiskLevel::Aggressive);
 
-    client.on_deposit(&1_000_000_i128);
+    client.on_dep(&1_000_000_i128);
 
     let alloc = client.get_allocation();
     assert_eq!(alloc.stable_pct, 20);
