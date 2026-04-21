@@ -63,13 +63,11 @@ A production-ready decentralized investment pool where users pool small investme
 
 ## Deployed Contract Addresses (Testnet)
 
-| Contract | Address |
-|---|---|
-| Pool Contract | `CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` |
-| Token (DLS) Contract | `CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` |
-| Strategy Contract | `CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` |
-
-> Replace the placeholder addresses above with the actual contract IDs from your `bash scripts/deploy.sh` output.
+| Contract | Address | Stellar Expert |
+|---|---|---|
+| Pool Contract | `CA6EL6IVZHFIJJZHVNQY3SMOGIH356PZ25HCE76PSJ2U6MYHAH4KO52S` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CA6EL6IVZHFIJJZHVNQY3SMOGIH356PZ25HCE76PSJ2U6MYHAH4KO52S) |
+| Token (DLS) Contract | `CD7VEXDANHNX4MI7TKWJ7RFWELLNTPLDJFMAUSWAZV42IYNBDUBX5SD7` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CD7VEXDANHNX4MI7TKWJ7RFWELLNTPLDJFMAUSWAZV42IYNBDUBX5SD7) |
+| Strategy Contract | `CA5CKYJ3ZROVJDCW7WS7NHPORIFNGU4VNE7MT7BP5BORPCRJCDEUGPEL` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CA5CKYJ3ZROVJDCW7WS7NHPORIFNGU4VNE7MT7BP5BORPCRJCDEUGPEL) |
 
 ## Setup Instructions
 
